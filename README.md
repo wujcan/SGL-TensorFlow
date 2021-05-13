@@ -28,6 +28,50 @@ Further details, please refer to [NeuRec](https://github.com/wubinzzu/NeuRec/)
 
 Secondly, specify dataset and recommender in configuration file *NeuRec.properties*.
 
+Model specific hyperparameters are in configuration file *./conf/SGL.properties*.
+
+Some important hyperparameters (taking a 3-layer SGL-ED as example):
+
+### yelp2018 dataset
+* Command
+```
+aug_tyep=1
+reg=1e-4
+embed_size=64
+n_layers=3
+ssl_reg=0.1
+ssl_ratio=0.1
+ssl_temp=0.2
+
+```
+
+### amazon-book dataset
+* Command
+```
+aug_tyep=1
+reg=1e-4
+embed_size=64
+n_layers=3
+ssl_reg=0.5
+ssl_ratio=0.1
+ssl_temp=0.2
+
+```
+
+### ifashion dataset
+* Command
+```
+aug_tyep=1
+reg=1e-3
+embed_size=64
+n_layers=3
+ssl_reg=0.02
+ssl_ratio=0.4
+ssl_temp=0.5
+
+```
+
+
 Finally, run [main.py](./main.py) in IDE or with command line:
 
 ```bash
