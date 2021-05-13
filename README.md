@@ -35,7 +35,7 @@ Some important hyperparameters (taking a 3-layer SGL-ED as example):
 
 ### yelp2018 dataset
 ```
-aug_tyep=1
+aug_type=1
 reg=1e-4
 embed_size=64
 n_layers=3
@@ -46,7 +46,7 @@ ssl_temp=0.2
 
 ### amazon-book dataset
 ```
-aug_tyep=1
+aug_type=1
 reg=1e-4
 embed_size=64
 n_layers=3
@@ -57,7 +57,7 @@ ssl_temp=0.2
 
 ### ifashion dataset
 ```
-aug_tyep=1
+aug_type=1
 reg=1e-3
 embed_size=64
 n_layers=3
