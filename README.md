@@ -3,4 +3,34 @@ This is our Tensorflow implementation for our SIGIR 2021 paper:
 
 >Jiancan Wu, Xiang Wang, Fuli Feng, Xiangnan He, Liang Chen, Jianxun Lian,and Xing Xie. 2021. Self-supervised Graph Learning for Recommendation, [Paper in arXiv](https://arxiv.org/abs/2010.10783).
 
-Coming up soon...
+## Environment Requirement
+
+The code runs well under python 3.7.7. The required packages are as follows:
+
+- Tensorflow-gpu == 1.15.0
+- numpy == 1.19.1
+- scipy == 1.5.2
+- pandas == 1.1.1
+
+## Quick Start
+Firstly, compline the evaluator of cpp implementation with the following command line:
+
+```bash
+python setup.py build_ext --inplace
+```
+
+If the compilation is successful, the evaluator of cpp implementation will be called automatically.
+Otherwise, the evaluator of python implementation will be called.
+
+**Note that the cpp implementation is much faster than python.**
+
+Further details, please refer to [NeuRec](https://github.com/wubinzzu/NeuRec/)
+
+Secondly, specify dataset and recommender in configuration file *NeuRec.properties*.
+
+Finally, run [main.py](./main.py) in IDE or with command line:
+
+```bash
+python main.py
+```
+
