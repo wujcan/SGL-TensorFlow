@@ -70,6 +70,6 @@ ssl_temp=0.5
 **Finally**, run [main.py](./main.py) in IDE or with command line:
 
 ```bash
-python main.py
+python main.py --recommender=SGL
 ```
 
