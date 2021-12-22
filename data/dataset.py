@@ -33,6 +33,9 @@ class Dataset(object):
 
         # self._split_data(conf)
         self._load_data(conf)
+
+        self._group_item_by_popularity()
+        self._group_user_by_popularity()
         print('Data loading finished')
 
     def _get_data_path(self, config):
@@ -241,6 +244,42 @@ class Dataset(object):
                                     shape=(self.num_users, self.num_items))
 
         return neg_matrix
+
+    def _group_item_by_popularity(self):
+        i_degree = np.array(self.train_matrix.sum(0))[0].astype(np.int32)
+        i_degree_sort = np.argsort(i_degree)    # in ascend order
+        i_degree_cumsum = i_degree.copy()
+        cum_sum = 0
+        for x in i_degree_sort:
+            cum_sum += i_degree_cumsum[x]
+            i_degree_cumsum[x] = cum_sum
+        
+        split_idx = np.linspace(0, self.train_matrix.sum(), 11)
+        self.item_group_idx = np.searchsorted(split_idx[1:-1], i_degree_cumsum)
+
+        print('Item degree grouping...')
+        for i in range(10):
+            self.item_group[i] = i_degree[self.item_group_idx == i]
+            # print('Size of group %d:' % i, self.item_group[i].size)
+            # print('Sum degree of group %d:' % i, self.item_group[i].sum())
+            # print('Min degree of group %d:' % i, self.item_group[i].min())
+            # print('Max degree of group %d:' % i, self.item_group[i].max())
+
+    def _group_user_by_popularity(self):
+        u_degree = np.array(self.train_matrix.sum(1))[:, 0].astype(np.int32)
+        u_degree_sort = np.argsort(u_degree)    # in ascend order
+        u_degree_cumsum = u_degree.copy()
+        cum_sum = 0
+        for x in u_degree_sort:
+            cum_sum += u_degree_cumsum[x]
+            u_degree_cumsum[x] = cum_sum
+        
+        split_idx = np.linspace(0, self.train_matrix.sum(), 11)
+        self.user_group_idx = np.searchsorted(split_idx[1:-1], u_degree_cumsum)
+
+        print('User degree grouping...')
+        for i in range(10):
+            self.user_group[i] = u_degree[self.user_group_idx == i]
 
     def __str__(self):
         num_users, num_items = self.num_users, self.num_items

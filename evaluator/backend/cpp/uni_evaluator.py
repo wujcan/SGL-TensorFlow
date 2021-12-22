@@ -124,6 +124,9 @@ class UniEvaluator(CPPEvaluator):
         test_users = DataIterator(test_users, batch_size=self.batch_size, shuffle=False, drop_last=False)
         batch_result = []
         
+        if model.pretrain:
+            batch_group = []
+            batch_rec_top20, batch_rating_top20 = [], []
         for batch_users in test_users:
             if self.user_neg_test is not None:
                 candidate_items = [list(self.user_pos_test[u]) + self.user_neg_test[u] for u in batch_users]
@@ -146,10 +149,50 @@ class UniEvaluator(CPPEvaluator):
                     train_items = self.user_pos_train[user]
                     train_items = [ x for x in train_items if not x in self.user_pos_test[user] ]
                     ranking_score[idx][train_items] = -np.inf
+            if model.pretrain:
+                ###### For grouping
+                # 1/|l_test|
+                num_test_per_user = np.array([len(test_items_per_user) for test_items_per_user in test_items])
+                num_test_per_user_inv = np.power(num_test_per_user, -1.0)
+                num_test_per_user_inv[np.isinf(num_test_per_user_inv)] = 0.
+                diag_num_test_per_user_inv = np.diag(num_test_per_user_inv) 
+                # |l_rec \intersection l_test|
+                batch_count_per_group = np.zeros([len(test_items), 10], dtype=np.int32)
+                batch_top_items_rec_ = arg_topk(ranking_score, 20)
+                batch_top_items_rec = np.concatenate([np.array(batch_users, ndmin=2).transpose(), batch_top_items_rec_], axis=1)
+                batch_rec_top20.append(batch_top_items_rec)
+                batch_top_ratings = []
+                for i in range(len(batch_users)):
+                    batch_top_ratings.append(ranking_score[i, batch_top_items_rec_[i]])
+                batch_top_ratings = np.concatenate(batch_top_ratings, axis=0)
+                batch_top_ratings = np.reshape(batch_top_ratings, [len(batch_users), -1])
+                batch_top_ratings = np.concatenate([np.array(batch_users, ndmin=2).transpose(), batch_top_ratings], axis=1)
+                batch_rating_top20.append(batch_top_ratings)
+                
+                for u in range(len(test_items)):
+                    for i in batch_top_items_rec[u]:
+                        if i in test_items[u]:
+                            batch_count_per_group[u, self.dataset.item_group_idx[i]] += 1
+                # batch_group_result = self.dataset.item_group_idx[batch_top_items_rec]
+                # batch_count_per_group = np.apply_along_axis(lambda x: np.bincount(x, minlength=10), axis=1, arr=batch_group_result)
+
+                # |l_rec \intersection l_test| / |l_test|
+                batch_count_per_group = np.matmul(diag_num_test_per_user_inv, batch_count_per_group)
+                batch_group.append(batch_count_per_group)
 
             result = self.eval_score_matrix(ranking_score, test_items, self.metrics,
                                             top_k=self.max_top, thread_num=self.num_thread)  # (B,k*metric_num)
             batch_result.append(result)
+
+        if model.pretrain:
+            all_rec_top20 = np.concatenate(batch_rec_top20, axis=0)
+            np.save('top_rec.npy', all_rec_top20)
+            all_rating_top20 = np.concatenate(batch_rating_top20, axis=0)
+            np.save('top_rating.npy', all_rating_top20)
+            all_group = np.concatenate(batch_group, axis=0)
+            final_group = np.mean(all_group, axis=0)
+            group_buf = '\t'.join([("%.5f" % x).ljust(12) for x in final_group])
+            print(group_buf)
 
         # concatenate the batch results to a matrix
         all_user_result = np.concatenate(batch_result, axis=0)  # (num_users, metrics_num*max_top)

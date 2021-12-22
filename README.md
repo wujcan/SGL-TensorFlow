@@ -73,3 +73,14 @@ ssl_temp=0.5
 python main.py --recommender=SGL
 ```
 
+## About Long-tail Recommendation
+To re-implement Figure 4 (Group-wise Long-tail Recommendation), first pretrain the model and save the user/item embeddings to file by additionally setting
+```
+save_flag=1
+pretrain=0
+```
+then re-run the code by changing
+```
+save_flag=0
+pretrain=1
+```
