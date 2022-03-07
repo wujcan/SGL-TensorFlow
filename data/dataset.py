@@ -29,6 +29,8 @@ class Dataset(object):
         self.itemids = None
         self.num_users = None
         self.num_items = None
+        self.item_group = {}
+        self.user_group = {}
         self.dataset_name = conf["data.input.dataset"]
 
         # self._split_data(conf)
@@ -259,7 +261,6 @@ class Dataset(object):
 
         print('Item degree grouping...')
         for i in range(10):
-            self.item_group[i] = i_degree[self.item_group_idx == i]
             # print('Size of group %d:' % i, self.item_group[i].size)
             # print('Sum degree of group %d:' % i, self.item_group[i].sum())
             # print('Min degree of group %d:' % i, self.item_group[i].min())
