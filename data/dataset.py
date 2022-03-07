@@ -261,6 +261,7 @@ class Dataset(object):
 
         print('Item degree grouping...')
         for i in range(10):
+            self.item_group[i] = i_degree[self.item_group_idx == i]
             # print('Size of group %d:' % i, self.item_group[i].size)
             # print('Sum degree of group %d:' % i, self.item_group[i].sum())
             # print('Min degree of group %d:' % i, self.item_group[i].min())
