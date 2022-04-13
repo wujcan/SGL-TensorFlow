@@ -1,7 +1,9 @@
 # SGL
-This is our Tensorflow implementation for our SIGIR 2021 paper:
+This is our Tensorflow implementation for our SIGIR 2021 paper. We also provide PyTorch implementation for SGL: https://github.com/wujcan/SGL-Torch.
 
 >Jiancan Wu, Xiang Wang, Fuli Feng, Xiangnan He, Liang Chen, Jianxun Lian,and Xing Xie. 2021. Self-supervised Graph Learning for Recommendation, [Paper in arXiv](https://arxiv.org/abs/2010.10783).
+
+This project is based on [NeuRec](https://github.com/wubinzzu/NeuRec/). Thanks to the contributors.
 
 ## Environment Requirement
 
@@ -24,8 +26,6 @@ If the compilation is successful, the evaluator of cpp implementation will be ca
 Otherwise, the evaluator of python implementation will be called.
 
 **Note that the cpp implementation is much faster than python.**
-
-Further details, please refer to [NeuRec](https://github.com/wubinzzu/NeuRec/)
 
 **Secondly**, specify dataset and recommender in configuration file *NeuRec.properties*.
 
