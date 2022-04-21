@@ -84,3 +84,15 @@ then re-run the code by changing
 save_flag=0
 pretrain=1
 ```
+
+
+
+## About Robustness to Noisy Interactions
+To re-implement Figure 6 (Model performance wrt. noise ratio), first run [add_noise.py](./add_noise.py) to generate the contaminated training data, for example,
+```bash
+python add_noise.py --data.input.dataset=yelp2018 --ratio=0.05
+```
+then run [main.py](./main.py), for example,
+```bash
+python main.py --recommender=SGL --data.input.dataset=yelp2018_0.05
+```
